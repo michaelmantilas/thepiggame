@@ -1,8 +1,7 @@
+
 value_dictionary = {}
 #this adds all the possible combinations of my score, opponent score, and the amount on that turn. these are the keys for the dictionary, sotred as a tuple
 #the keys are the probability that you will win if you take this certain action
-#another comment to test the commit process
-#just checking to learn commands in the terminal
 for my_score in range(100):
     for opponent_score in range(100):
         for turn_total in range(100):
