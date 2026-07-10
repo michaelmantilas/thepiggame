@@ -46,3 +46,5 @@ for i in range(100):
             else:
                 value_dictionary[(i,j,k)] = p_hold
 
+while True:
+    choice = input(f"Your score is {my_score}, your opponent's score is {opponent_score}. \n Your turn total is {turn_total}\n would you like to roll or hold?\n -roll\n -hold\n >")
