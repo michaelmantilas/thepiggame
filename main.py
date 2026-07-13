@@ -1,3 +1,4 @@
+import random
 
 value_dictionary = {}
 def get_prob(my_score,opponent_score,turn_total):
@@ -45,6 +46,37 @@ for i in range(100):
                 value_dictionary[(i,j,k)] = p_roll
             else:
                 value_dictionary[(i,j,k)] = p_hold
-
+turn = 2
 while True:
-    choice = input(f"Your score is {my_score}, your opponent's score is {opponent_score}. \n Your turn total is {turn_total}\n would you like to roll or hold?\n -roll\n -hold\n >")
+    if turn % 2 == 0:
+        choice = input(f"Your score is {my_score}, your opponent's score is {opponent_score}. \n Your turn total is {turn_total}\n would you like to roll or hold?\n -roll\n -hold\n >").lower()
+        if choice == "roll":
+            dice_roll = random.randint(1,6)
+            if dice_roll == 1:
+                turn_total = 0
+                turn += 1
+            else:
+                turn_total += dice_roll
+        elif choice == "hold":
+            my_score += turn_total
+            turn_total = 0
+            turn += 1
+    else:
+        if make_ai_decision(my_score,opponent_score,turn_total) == "Roll":
+            dice_roll = random.randint(1,6)
+            if dice_roll == 1:
+                turn_total = 0
+                turn += 1
+            else:
+                turn_total += dice_roll
+        elif make_ai_decision(my_score, opponent_score, turn_total) == "Hold":
+            opponent_score += turn_total
+            turn_total = 0
+            turn += 1
+
+
+
+
+
+
+
