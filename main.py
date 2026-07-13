@@ -1,5 +1,5 @@
 import random
-import time
+
 value_dictionary = {}
 def get_prob(my_score,opponent_score,turn_total):
     if my_score + turn_total >= 100:
@@ -10,7 +10,7 @@ def get_prob(my_score,opponent_score,turn_total):
 
 def make_ai_decision(my_score, opponent_score, turn_total):
     #if I stop, what is my probability to win?
-    chance_if_hold = get_prob(my_score + turn_total, opponent_score, 0)
+    chance_if_hold = 1 - get_prob(opponent_score, my_score + turn_total, 0)
     #if I roll, what is my chance to win and my chance to lose all points on this turn?
     chance_if_roll = get_prob(my_score, opponent_score, turn_total)
     #compares both probabilities, bigger is better
@@ -26,36 +26,36 @@ for my_score in range(100):
         for turn_total in range(100):
             current_state = (my_score, opponent_score, turn_total)
             value_dictionary[current_state] = 0.5
-
-for i in range(100):
-    for j in range(100):
-        for k in range(100):
-            my_score = i
-            opponent_score = j
-            turn_total = k
-            my_score += turn_total
-            p_hold = 1 - get_prob(opponent_score,my_score,0)
-            my_score = i
-            roll_scenarios = []
-            roll_scenarios.append(1 - get_prob(opponent_score,my_score,0))
-            for g in range(2,7):
-                 roll_scenarios.append(get_prob(my_score, opponent_score, turn_total + g))
-            p_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + roll_scenarios[5]
-            p_roll = p_roll / 6
-            if p_roll > p_hold:
-                value_dictionary[(i,j,k)] = p_roll
-            else:
-                value_dictionary[(i,j,k)] = p_hold
+for gr in range(20):
+    for i in range(99,-1,-1):
+        for j in range(99,-1,-1):
+            for k in range(99,-1,-1):
+                my_score = i
+                opponent_score = j
+                turn_total = k
+                my_score += turn_total
+                p_hold = 1 - get_prob(opponent_score,my_score,0)
+                my_score = i
+                roll_scenarios = []
+                roll_scenarios.append(1 - get_prob(opponent_score,my_score,0))
+                for g in range(2,7):
+                     roll_scenarios.append(get_prob(my_score, opponent_score, turn_total + g))
+                p_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + roll_scenarios[5]
+                p_roll = p_roll / 6
+                if p_roll > p_hold:
+                    value_dictionary[(i,j,k)] = p_roll
+                else:
+                    value_dictionary[(i,j,k)] = p_hold
 turn = 2
 turn_total = 0
 opponent_score = 0
 my_score = 0
 while True:
     if my_score >= 100:
-        print(f"You win! \nIt took you {turn - 2} turns.\nThe AI was on {opponent_score} when you reached {my_score}.\nWell done.")
+        print(f"You win! \nIt took you {turn / 2 - 1} turns.\nThe AI was on {opponent_score} when you reached {my_score}.\nWell done.")
         break
     elif opponent_score >= 100:
-        print(f"You lose! \nIt took the AI {turn - 2} turns.\nYou were on {my_score} when the AI reached {opponent_score}.\nBetter luck next time.")
+        print(f"You lose! \nIt took the AI {turn / 2 - 1} turns.\nYou were on {my_score} when the AI reached {opponent_score}.\nBetter luck next time.")
         break
     if turn % 2 == 0:
         print("")
@@ -77,7 +77,7 @@ while True:
     else:
         print("")
         print("It is the AI's turn now.")
-        if make_ai_decision(my_score,opponent_score,turn_total) == "Roll":
+        if make_ai_decision(opponent_score,my_score,turn_total) == "Roll":
             dice_roll = random.randint(1,6)
             if dice_roll == 1:
                 turn_total = 0
@@ -87,7 +87,7 @@ while True:
                 turn_total += dice_roll
                 print(f"The AI decided to roll. They got a {dice_roll}.\nTheir turn keeps going.")
                 print(f"They have a turn total of {turn_total} and they have {opponent_score} points banked.")
-        elif make_ai_decision(my_score, opponent_score, turn_total) == "Hold":
+        elif make_ai_decision(opponent_score, my_score, turn_total) == "Hold":
             opponent_score += turn_total
             print(f"The AI decided to hold. They banked {turn_total} points bringing their final score for this turn to {opponent_score}")
             turn_total = 0
