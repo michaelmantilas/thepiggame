@@ -10,11 +10,17 @@ def get_prob(my_score,opponent_score,turn_total):
 
 def make_ai_decision(my_score, opponent_score, turn_total):
     #if I stop, what is my probability to win?
-    chance_if_hold = 1 - get_prob(opponent_score, my_score + turn_total, 0)
+    chance_of_hold = 1 - get_prob(opponent_score, my_score + turn_total, 0)
     #if I roll, what is my chance to win and my chance to lose all points on this turn?
-    chance_if_roll = get_prob(my_score, opponent_score, turn_total)
-    #compares both probabilities, bigger is better
-    if chance_if_hold > chance_if_roll:
+    roll_scenarios = []
+    roll_scenarios.append(1 - get_prob(opponent_score, my_score, 0))
+    for g in range(2, 7):
+        roll_scenarios.append(get_prob(my_score, opponent_score, turn_total + g))
+        chance_of_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + \
+             roll_scenarios[5]
+    chance_of_roll = chance_of_roll / 6
+    #compares both probabilities
+    if chance_of_hold > chance_of_roll:
         return "Hold"
     else:
         return "Roll"
@@ -26,7 +32,8 @@ for my_score in range(100):
         for turn_total in range(100):
             current_state = (my_score, opponent_score, turn_total)
             value_dictionary[current_state] = 0.5
-for gr in range(20):
+
+while True:
     for i in range(99,-1,-1):
         for j in range(99,-1,-1):
             for k in range(99,-1,-1):
@@ -35,17 +42,8 @@ for gr in range(20):
                 turn_total = k
                 my_score += turn_total
                 p_hold = 1 - get_prob(opponent_score,my_score,0)
-                my_score = i
-                roll_scenarios = []
-                roll_scenarios.append(1 - get_prob(opponent_score,my_score,0))
-                for g in range(2,7):
-                     roll_scenarios.append(get_prob(my_score, opponent_score, turn_total + g))
-                p_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + roll_scenarios[5]
-                p_roll = p_roll / 6
-                if p_roll > p_hold:
-                    value_dictionary[(i,j,k)] = p_roll
-                else:
-                    value_dictionary[(i,j,k)] = p_hold
+                value_dictionary[opponent_score,my_score,0] = p_hold
+
 turn = 2
 turn_total = 0
 opponent_score = 0
