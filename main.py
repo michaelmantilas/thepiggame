@@ -34,6 +34,7 @@ for my_score in range(100):
             value_dictionary[current_state] = 0.5
 
 while True:
+    old_state = value_dictionary[0,0,0]
     for i in range(99,-1,-1):
         for j in range(99,-1,-1):
             for k in range(99,-1,-1):
@@ -43,6 +44,9 @@ while True:
                 my_score += turn_total
                 p_hold = 1 - get_prob(opponent_score,my_score,0)
                 value_dictionary[opponent_score,my_score,0] = p_hold
+    new_state = value_dictionary[0,0,0]
+    if old_state - new_state < 0.0001 and new_state - old_state < 0.0001:
+        break
 
 turn = 2
 turn_total = 0
