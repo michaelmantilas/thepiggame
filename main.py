@@ -45,8 +45,10 @@ while True:
                 p_hold = 1 - get_prob(opponent_score,my_score,0)
                 value_dictionary[opponent_score,my_score,0] = p_hold
     new_state = value_dictionary[0,0,0]
-    if old_state - new_state < 0.0001 and new_state - old_state < 0.0001:
+    if old_state - new_state < 0.000001 and new_state - old_state < 0.000001:
         break
+#testing the last value to be true
+print(value_dictionary[0,0,0])
 
 turn = 2
 turn_total = 0
