@@ -16,8 +16,7 @@ def make_ai_decision(my_score, opponent_score, turn_total):
     roll_scenarios.append(1 - get_prob(opponent_score, my_score, 0))
     for g in range(2, 7):
         roll_scenarios.append(get_prob(my_score, opponent_score, turn_total + g))
-        chance_of_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + \
-             roll_scenarios[5]
+    chance_of_roll = roll_scenarios[0] + roll_scenarios[1] + roll_scenarios[2] + roll_scenarios[3] + roll_scenarios[4] + roll_scenarios[5]
     chance_of_roll = chance_of_roll / 6
     #compares both probabilities
     if chance_of_hold > chance_of_roll:
@@ -33,23 +32,31 @@ for my_score in range(100):
             current_state = (my_score, opponent_score, turn_total)
             value_dictionary[current_state] = 0.5
 
-while True:
-    old_state = value_dictionary[0,0,0]
-    for i in range(99,-1,-1):
-        for j in range(99,-1,-1):
-            for k in range(99,-1,-1):
-                my_score = i
-                opponent_score = j
-                turn_total = k
-                my_score += turn_total
-                p_hold = 1 - get_prob(opponent_score,my_score,0)
-                value_dictionary[opponent_score,my_score,0] = p_hold
-    new_state = value_dictionary[0,0,0]
-    if old_state - new_state < 0.000001 and new_state - old_state < 0.000001:
-        break
-#testing the last value to be true
-print(value_dictionary[0,0,0])
+convergence_threshold = 0.000001
 
+while True:
+    max_change = 0.0
+    for i in range(100):
+        for j in range(100):
+            for k in range(100):
+                # Save the original state so that we don't change the keys
+                current_state = (i, j, k)
+                old_prob = value_dictionary[current_state]
+                p_hold = 1 - get_prob(j, i + k, 0)
+                roll_scenarios = []
+                roll_scenarios.append(1 - get_prob(j, i, 0))
+                for roll_val in range(2, 7):
+                    roll_scenarios.append(get_prob(i, j, k + roll_val))
+                p_roll = sum(roll_scenarios) / 6
+                new_prob = max(p_hold, p_roll)
+                value_dictionary[current_state] = new_prob
+                change = abs(new_prob - old_prob)
+                if change > max_change:
+                    max_change = change
+
+    #Check if the entire dictionary stopped shifting
+    if max_change < convergence_threshold:
+        break
 turn = 2
 turn_total = 0
 opponent_score = 0
